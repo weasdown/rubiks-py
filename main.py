@@ -1,4 +1,4 @@
-# Rubik's Cube simulator
+# Simulator for a 3x3 Rubik's Cube
 
 from enum import Enum
 
