@@ -14,6 +14,14 @@ class ColumnOrRowIndex(Enum):
     SECOND = 1
     THIRD = 2
 
+class CubeOperations(Enum):
+    F = 0
+    R = 1
+    U = 2
+    L = 3
+    B = 4
+    D = 5
+
 
 class Cube:
     pass
