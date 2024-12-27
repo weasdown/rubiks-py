@@ -28,6 +28,7 @@ class CubeOperations(Enum):
     D = 5
 
 class Colour(Enum):
+    # TODO add functions to return adjacent colours (like with Dart enums)
     GREEN = 0
     RED = 1
     WHITE = 2
