@@ -1,5 +1,6 @@
 # Simulator for a 3x3 Rubik's Cube
 
+import numpy as np
 from enum import Enum
 
 class Direction(Enum):
@@ -22,7 +23,7 @@ class CubeOperations(Enum):
     B = 4
     D = 5
 
-class CubeColours(Enum):
+class Colour(Enum):
     GREEN = 0
     RED = 1
     WHITE = 2
@@ -34,8 +35,15 @@ class Cube:
     pass
 
 class Side:
-    def __init__(self):
-        pass
+    def __init__(self, colour: Colour, colour_anticlockwise_from_column_1: Colour,
+                 colour_clockwise_from_column_1: Colour, colour_left_from_column_1: Colour):
+        self.colour: Colour = colour
+
+        self.colour_anticlockwise_from_column_1: Colour = colour_anticlockwise_from_column_1
+        self.colour_clockwise_from_column_1: Colour = colour_clockwise_from_column_1
+        self.colour_left_from_column_1: Colour = colour_left_from_column_1
+
+        self.matrix: np.ndarray = np.full((3,3), self.colour)
 
     def rotate(self, direction: Direction):
         pass
