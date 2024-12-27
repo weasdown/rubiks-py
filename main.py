@@ -6,6 +6,7 @@ class Direction(Enum):
     """Defines the two possible ways to rotate a side."""
     ANTICLOCKWISE = 0
     CLOCKWISE = 1
+    DOUBLE = 2
 
 class ColumnOrRowIndex(Enum):
     """Makes checks of column or row indices more rigorous."""
