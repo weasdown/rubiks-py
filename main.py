@@ -59,7 +59,7 @@ class Side:
         self.matrix = np.rot90(self.matrix, rotations)
 
     def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
-        pass
+        raise NotImplementedError
 
     def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: Direction):
-        pass
+        raise NotImplementedError
