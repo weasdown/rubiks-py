@@ -22,6 +22,13 @@ class CubeOperations(Enum):
     B = 4
     D = 5
 
+class CubeColours(Enum):
+    GREEN = 0
+    RED = 1
+    WHITE = 2
+    ORANGE = 3
+    BLUE = 4
+    YELLOW = 5
 
 class Cube:
     pass
