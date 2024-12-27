@@ -63,6 +63,7 @@ class Side:
         self.matrix = np.rot90(self.matrix, rotations)
 
     def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
+        # TODO test this
         self.matrix[:, column_index.value] =  self.colour_clockwise_from_column_1 if \
                 new_values_from_side == Direction.CLOCKWISE else self.colour_anticlockwise_from_column_1
 
