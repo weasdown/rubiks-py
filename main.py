@@ -46,7 +46,17 @@ class Side:
         self.matrix: np.ndarray = np.full((3,3), self.colour)
 
     def rotate(self, direction: Direction):
-        pass
+        # Note: np.rot90 rotates anti-clockwise by default.
+        rotations: int = -1  # clockwise rotation by default
+        match direction:
+           case Direction.ANTICLOCKWISE:
+               rotations = 1
+           case Direction.CLOCKWISE:
+               rotations = -1
+           case Direction.ANTICLOCKWISE:
+               rotations = 2
+
+        self.matrix = np.rot90(self.matrix, rotations)
 
     def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
         pass
