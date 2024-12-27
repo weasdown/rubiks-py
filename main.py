@@ -27,9 +27,9 @@ class Colour(Enum):
     GREEN = 0
     RED = 1
     WHITE = 2
-    ORANGE = 3
-    BLUE = 4
-    YELLOW = 5
+    ORANGE = 5
+    BLUE = 6
+    YELLOW = 4
 
 class Cube:
     pass
