@@ -100,5 +100,3 @@ print(cube.green.matrix)
 
 cube.green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
 print(cube.green.matrix_string)
-
-print(Colour.GREEN)
