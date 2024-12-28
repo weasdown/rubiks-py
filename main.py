@@ -116,7 +116,6 @@ class Side:
             self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
 
 cube = Cube()
-# green = Side(Colour.GREEN, Colour.WHITE, Colour.YELLOW, Colour.ORANGE)
 print(cube.green)
 
 cube.green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
