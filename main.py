@@ -58,6 +58,9 @@ class Side:
 
         self.matrix: np.ndarray = np.full((3,3), self.colour.value, dtype=int)
 
+    def __str__(self):
+        return self.matrix_string
+
     @property
     def matrix_string(self):
         """Gets a neater version of self.matrix that shows the name of the Colour in each cell."""
@@ -96,7 +99,7 @@ class Side:
 
 cube = Cube()
 # green = Side(Colour.GREEN, Colour.WHITE, Colour.YELLOW, Colour.ORANGE)
-print(cube.green.matrix)
+print(cube.green)
 
 cube.green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
 print(cube.green.matrix_string)
