@@ -47,6 +47,24 @@ class Cube:
 
         self.sides: list[Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
 
+    def F(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
+    def R(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
+    def U(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
+    def L(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
+    def B(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
+    def D(self, quarter_turns: int = 1):
+        raise NotImplementedError
+
 class Side:
     def __init__(self, colour: Colour, colour_above_column_1: Colour, colour_left_from_column_1: Colour):
         self.colour: Colour = colour
