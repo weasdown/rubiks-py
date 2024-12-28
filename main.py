@@ -309,6 +309,5 @@ cube.F()
 
 # TODO enabling chaining of moves by having each side matrix update with values from relevant adjacent matrix, rather than setting hard colours
 cube.R()
-# cube.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
-# print(cube.green.matrix_string)
+
 print(cube.red.matrix_string)
