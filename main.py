@@ -50,6 +50,17 @@ class Side:
 
         self.matrix: np.ndarray = np.full((3,3), self.colour.value, dtype=int)
 
+    @property
+    def matrix_string(self):
+        """Gets a neater version of self.matrix that shows the name of the Colour in each cell."""
+        matrix = np.full((3,3), '', dtype=np.dtype('U6'))
+        for row_index, row in enumerate(self.matrix):
+            for column_index, value in enumerate(row):
+                matrix[row_index, column_index] = Colour(value).name
+
+        matrix = str(matrix)[1:-1]  # convert to string, remove the extra leading and trailing square brackets
+        return matrix
+
     def rotate(self, direction: Direction):
         # Note: np.rot90 rotates anti-clockwise by default.
         rotations: int = -1  # clockwise rotation by default
