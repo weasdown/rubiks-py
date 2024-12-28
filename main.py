@@ -37,16 +37,24 @@ class Colour(Enum):
     YELLOW = 4
 
 class Cube:
-    pass
+    def __init__(self):
+        self.green: Side = Side(Colour.GREEN, Colour.WHITE, Colour.ORANGE)
+        self.red: Side = Side(Colour.RED, Colour.WHITE, Colour.GREEN)
+        self.white: Side = Side(Colour.WHITE, Colour.BLUE, Colour.ORANGE)
+        self.orange: Side = Side(Colour.ORANGE, Colour.WHITE, Colour.BLUE)
+        self.blue: Side = Side(Colour.BLUE, Colour.WHITE, Colour.RED)
+        self.yellow: Side = Side(Colour.YELLOW, Colour.GREEN, Colour.ORANGE)
+
+        self.sides: list[Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
 
 class Side:
-    def __init__(self, colour: Colour, colour_anticlockwise_from_column_1: Colour,
-                 colour_clockwise_from_column_1: Colour, colour_left_from_column_1: Colour):
+    def __init__(self, colour: Colour, colour_above_column_1: Colour, colour_left_from_column_1: Colour):
         self.colour: Colour = colour
 
-        self.colour_anticlockwise_from_column_1: Colour = colour_anticlockwise_from_column_1
-        self.colour_clockwise_from_column_1: Colour = colour_clockwise_from_column_1
+        self.colour_above_column_1: Colour = colour_above_column_1
+        self.colour_below_column_1: Colour = Colour(6 - self.colour_above_column_1.value)
         self.colour_left_from_column_1: Colour = colour_left_from_column_1
+        self.colour_right_from_column_1: Colour = Colour(6 - self.colour_left_from_column_1.value)
 
         self.matrix: np.ndarray = np.full((3,3), self.colour.value, dtype=int)
 
@@ -76,8 +84,8 @@ class Side:
 
     def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
         # TODO test this
-        self.matrix[:, column_index.value] =  self.colour_clockwise_from_column_1 if \
-                new_values_from_side == Direction.CLOCKWISE else self.colour_anticlockwise_from_column_1
+        self.matrix[:, column_index.value] =  self.colour_below_column_1 if \
+                new_values_from_side == Direction.CLOCKWISE else self.colour_above_column_1
 
     def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: RowDirection):
         if new_values_from_side == RowDirection.LEFT:
@@ -86,8 +94,11 @@ class Side:
             # Use that Colour values have been defined so opposite sides on the Cube add to 6.
             self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
 
-green = Side(Colour.GREEN, Colour.WHITE, Colour.YELLOW, Colour.ORANGE)
-print(green.matrix)
+cube = Cube()
+# green = Side(Colour.GREEN, Colour.WHITE, Colour.YELLOW, Colour.ORANGE)
+print(cube.green.matrix)
 
-green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
-print(green.matrix)
+cube.green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
+print(cube.green.matrix_string)
+
+print(Colour.GREEN)
