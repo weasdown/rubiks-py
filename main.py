@@ -38,34 +38,40 @@ class Colour(Enum):
 
 class Cube:
     def __init__(self):
-        self.green: Side = Side(Colour.GREEN, Colour.WHITE, Colour.ORANGE)
-        self.red: Side = Side(Colour.RED, Colour.WHITE, Colour.GREEN)
-        self.white: Side = Side(Colour.WHITE, Colour.BLUE, Colour.ORANGE)
-        self.orange: Side = Side(Colour.ORANGE, Colour.WHITE, Colour.BLUE)
-        self.blue: Side = Side(Colour.BLUE, Colour.WHITE, Colour.RED)
-        self.yellow: Side = Side(Colour.YELLOW, Colour.GREEN, Colour.ORANGE)
+        self.green: _Side = _Side(Colour.GREEN, Colour.WHITE, Colour.ORANGE)
+        self.red: _Side = _Side(Colour.RED, Colour.WHITE, Colour.GREEN)
+        self.white: _Side = _Side(Colour.WHITE, Colour.BLUE, Colour.ORANGE)
+        self.orange: _Side = _Side(Colour.ORANGE, Colour.WHITE, Colour.BLUE)
+        self.blue: _Side = _Side(Colour.BLUE, Colour.WHITE, Colour.RED)
+        self.yellow: _Side = _Side(Colour.YELLOW, Colour.GREEN, Colour.ORANGE)
 
-        self.sides: list[Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
+        self.sides: list[_Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
 
     def F(self, quarter_turns: int = 1):
+        """Rotate the Green side."""
         raise NotImplementedError
 
     def R(self, quarter_turns: int = 1):
+        """Rotate the Red side."""
         raise NotImplementedError
 
     def U(self, quarter_turns: int = 1):
+        """Rotate the White side."""
         raise NotImplementedError
 
     def L(self, quarter_turns: int = 1):
+        """Rotate the Orange side."""
         raise NotImplementedError
 
     def B(self, quarter_turns: int = 1):
+        """Rotate the Blue side."""
         raise NotImplementedError
 
     def D(self, quarter_turns: int = 1):
+        """Rotate the Yellow side."""
         raise NotImplementedError
 
-class Side:
+class _Side:
     def __init__(self, colour: Colour, colour_above_column_1: Colour, colour_left_from_column_1: Colour):
         self.colour: Colour = colour
 
@@ -90,7 +96,7 @@ class Side:
         matrix = str(matrix)[1:-1]  # convert to string, remove the extra leading and trailing square brackets
         return matrix
 
-    def rotate(self, direction: Direction):
+    def _rotate(self, direction: Direction):
         # Note: np.rot90 rotates anti-clockwise by default.
         rotations: int = -1  # clockwise rotation by default
         match direction:
@@ -103,12 +109,12 @@ class Side:
 
         self.matrix = np.rot90(self.matrix, rotations)
 
-    def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
+    def _set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
         # TODO test this
         self.matrix[:, column_index.value] =  self.colour_below_column_1 if \
                 new_values_from_side == Direction.CLOCKWISE else self.colour_above_column_1
 
-    def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: RowDirection):
+    def _set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: RowDirection):
         if new_values_from_side == RowDirection.LEFT:
             self.matrix[row_index.value, :] = self.colour_left_from_column_1.value
         else:
@@ -118,5 +124,5 @@ class Side:
 cube = Cube()
 print(cube.green)
 
-cube.green.set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
+cube.green._set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
 print(cube.green.matrix_string)
