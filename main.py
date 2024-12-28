@@ -7,11 +7,17 @@ class Direction(Enum):
     """Defines the two possible ways to rotate a side."""
     ANTICLOCKWISE = 0
     CLOCKWISE = 1
-    DOUBLE = 2
+    OPPOSITE = 2
 
-class RowDirection(Enum):
+class VerticalDirection(Enum):
+    TOP = 0
+    BOTTOM = 1
+    OPPOSITE = 2
+
+class HorizontalDirection(Enum):
     LEFT = 0
     RIGHT = 1
+    OPPOSITE = 2
 
 class ColumnOrRowIndex(Enum):
     """Makes checks of column or row indices more rigorous."""
@@ -38,47 +44,202 @@ class Colour(Enum):
 
 class Cube:
     def __init__(self):
+        """
+        Default cube orientation has:
+
+        - Yellow on U face
+        - Blue on F face
+        - Orange on L face
+
+        The Blue side is therefore the centre of the net that defines which cells are rows or columns on each side.
+        """
         self.green: _Side = _Side(Colour.GREEN, Colour.WHITE, Colour.ORANGE)
-        self.red: _Side = _Side(Colour.RED, Colour.WHITE, Colour.GREEN)
+        self.red: _Side = _Side(Colour.RED, Colour.YELLOW, Colour.BLUE)
         self.white: _Side = _Side(Colour.WHITE, Colour.BLUE, Colour.ORANGE)
-        self.orange: _Side = _Side(Colour.ORANGE, Colour.WHITE, Colour.BLUE)
-        self.blue: _Side = _Side(Colour.BLUE, Colour.WHITE, Colour.RED)
+        self.orange: _Side = _Side(Colour.ORANGE, Colour.YELLOW, Colour.GREEN)
+        self.blue: _Side = _Side(Colour.BLUE, Colour.YELLOW, Colour.ORANGE)
         self.yellow: _Side = _Side(Colour.YELLOW, Colour.GREEN, Colour.ORANGE)
 
         self.sides: list[_Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
 
     def F(self, quarter_turns: int = 1):
-        """Rotate the Green side."""
-        raise NotImplementedError
+        """Rotate the Blue side.
+
+        Unaffected side: Green.
+        """
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.blue.rotate(Direction.CLOCKWISE)
+                self.yellow.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                self.white.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                self.red.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+                self.orange.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+
+            case -1:
+                self.blue.rotate(Direction.ANTICLOCKWISE)
+                self.yellow.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+                self.white.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+                self.red.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+                self.orange.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+
+            case 2:
+                self.blue.rotate(Direction.OPPOSITE)
+                self.yellow.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
+                self.white.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
+                self.red.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
+                self.orange.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
 
     def R(self, quarter_turns: int = 1):
-        """Rotate the Red side."""
-        raise NotImplementedError
+        """Rotate the Red side.
+
+        Unaffected side: Orange.
+        """
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.red.rotate(Direction.CLOCKWISE)
+                self.blue.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+                self.yellow.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+                self.white.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+                self.green.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+
+            case -1:
+                self.red.rotate(Direction.ANTICLOCKWISE)
+                self.blue.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+                self.yellow.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+                self.white.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+                self.green.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+
+            case 2:
+                self.red.rotate(Direction.OPPOSITE)
+                self.blue.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
+                self.yellow.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
+                self.white.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
+                self.green.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
 
     def U(self, quarter_turns: int = 1):
-        """Rotate the White side."""
-        raise NotImplementedError
+        """Rotate the Yellow side.
+
+        Unaffected side: White.
+        """
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.yellow.rotate(Direction.CLOCKWISE)
+                self.blue.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                self.orange.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                self.red.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                self.green.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+
+            case -1:
+                self.yellow.rotate(Direction.ANTICLOCKWISE)
+                self.blue.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+                self.orange.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+                self.red.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+                self.green.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+
+            case 2:
+                self.yellow.rotate(Direction.OPPOSITE)
+                self.blue.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
+                self.orange.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
+                self.red.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
+                self.green.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
 
     def L(self, quarter_turns: int = 1):
-        """Rotate the Orange side."""
-        raise NotImplementedError
+        """Rotate the Orange side.
+
+        Unaffected side: Red.
+        """
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.orange.rotate(Direction.CLOCKWISE)
+                self.blue.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+                self.yellow.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+                self.white.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+                self.green.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+
+            case -1:
+                self.orange.rotate(Direction.ANTICLOCKWISE)
+                self.blue.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+                self.yellow.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+                self.white.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+                self.green.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+
+            case 2:
+                self.orange.rotate(Direction.OPPOSITE)
+                self.blue.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
+                self.yellow.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
+                self.white.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
+                self.green.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
 
     def B(self, quarter_turns: int = 1):
-        """Rotate the Blue side."""
-        raise NotImplementedError
+        """Rotate the Green side.
+
+        Unaffected side: Blue.
+        """
+        # TODO update to new UFL
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.green.rotate(Direction.CLOCKWISE)
+                self.yellow.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                self.white.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                self.red.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+                self.orange.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+
+            case -1:
+                self.green.rotate(Direction.ANTICLOCKWISE)
+                self.yellow.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+                self.white.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+                self.red.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.TOP)
+                self.orange.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.BOTTOM)
+
+            case 2:
+                self.green.rotate(Direction.OPPOSITE)
+                self.yellow.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
+                self.white.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
+                self.red.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.OPPOSITE)
+                self.orange.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.OPPOSITE)
 
     def D(self, quarter_turns: int = 1):
-        """Rotate the Yellow side."""
-        raise NotImplementedError
+        """Rotate the White side.
+
+        Unaffected side: Yellow.
+        """
+        # raise NotImplementedError  # TODO remove error once tested
+        match quarter_turns:
+            case 1:
+                self.white.rotate(Direction.CLOCKWISE)
+                self.blue.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                self.orange.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                self.red.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                self.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+
+            case -1:
+                self.white.rotate(Direction.ANTICLOCKWISE)
+                self.blue.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+                self.orange.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+                self.red.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.RIGHT)
+                self.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+
+            case 2:
+                self.white.rotate(Direction.OPPOSITE)
+                self.blue.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
+                self.orange.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
+                self.red.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.OPPOSITE)
+                self.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
 
 class _Side:
     def __init__(self, colour: Colour, colour_above_column_1: Colour, colour_left_from_column_1: Colour):
         self.colour: Colour = colour
 
-        self.colour_above_column_1: Colour = colour_above_column_1
-        self.colour_below_column_1: Colour = Colour(6 - self.colour_above_column_1.value)
-        self.colour_left_from_column_1: Colour = colour_left_from_column_1
-        self.colour_right_from_column_1: Colour = Colour(6 - self.colour_left_from_column_1.value)
+        self.colour_above: Colour = colour_above_column_1
+        self.colour_below: Colour = Colour(6 - self.colour_above.value)
+        self.colour_left: Colour = colour_left_from_column_1
+        self.colour_right: Colour = Colour(6 - self.colour_left.value)
+        self.colour_opposite: Colour = Colour(6 - self.colour.value)
 
         self.matrix: np.ndarray = np.full((3,3), self.colour.value, dtype=int)
 
@@ -96,7 +257,7 @@ class _Side:
         matrix = str(matrix)[1:-1]  # convert to string, remove the extra leading and trailing square brackets
         return matrix
 
-    def _rotate(self, direction: Direction):
+    def rotate(self, direction: Direction):
         # Note: np.rot90 rotates anti-clockwise by default.
         rotations: int = -1  # clockwise rotation by default
         match direction:
@@ -109,20 +270,42 @@ class _Side:
 
         self.matrix = np.rot90(self.matrix, rotations)
 
-    def _set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: Direction):
-        # TODO test this
-        self.matrix[:, column_index.value] =  self.colour_below_column_1 if \
-                new_values_from_side == Direction.CLOCKWISE else self.colour_above_column_1
+    def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: VerticalDirection):
+        # TODO test set_column
+        new_value: int = self.colour.value
+        match new_values_from_side:
+            case VerticalDirection.TOP:
+                new_value = self.colour_above.value
+            case VerticalDirection.BOTTOM:
+                new_value = self.colour_below.value
+            case VerticalDirection.OPPOSITE:
+                new_value = new_value = self.colour_opposite.value
 
-    def _set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: RowDirection):
-        if new_values_from_side == RowDirection.LEFT:
-            self.matrix[row_index.value, :] = self.colour_left_from_column_1.value
-        else:
-            # Use that Colour values have been defined so opposite sides on the Cube add to 6.
-            self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
+        self.matrix[:, column_index.value] =  new_value
+
+    def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: HorizontalDirection):
+        # TODO remove old implementation
+        # if new_values_from_side == HorizontalDirection.LEFT:
+        #     self.matrix[row_index.value, :] = self.colour_left_from_column_1.value
+        # else:
+        #     # Use that Colour values have been defined so opposite sides on the Cube add to 6.
+        #     self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
+
+        # TODO test set_row
+        new_value: int = self.colour.value
+        match new_values_from_side:
+            case HorizontalDirection.LEFT:
+                new_value = self.colour_left.value
+            case HorizontalDirection.RIGHT:
+                new_value = self.colour_right.value
+            case HorizontalDirection.OPPOSITE:
+                new_value = self.colour_opposite.value
+        self.matrix[row_index.value, :] = new_value
 
 cube = Cube()
-print(cube.green)
-
-cube.green._set_row(ColumnOrRowIndex.FIRST, RowDirection.LEFT)
-print(cube.green.matrix_string)
+# print(cube.green)
+#
+cube.F()
+# cube.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.LEFT)
+# print(cube.green.matrix_string)
+print(cube.red.matrix_string)
