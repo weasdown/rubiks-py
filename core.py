@@ -12,7 +12,6 @@ class _Colour:
     hex: int
 
 class Colour(Enum):
-    # TODO add functions to return adjacent colours (like with Dart enums)
     GREEN = _Colour('Green', 0, int('0x00FF00', 0))
     RED = _Colour('Red', 1, int('0xFF0000', 0))
     WHITE = _Colour('White', 2, int('0xFFFFFF', 0))
