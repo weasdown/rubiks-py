@@ -5,7 +5,6 @@ from __future__ import annotations
 from core import Colour, RotationDirection
 
 import networkx as nx
-import matplotlib.pyplot as plt
 import numpy as np
 
 # class Ring:
@@ -85,32 +84,3 @@ class _Side:
 
         text += '\n'
         return text
-
-
-cube = Cube()
-
-# G = cube.graph
-# print(f'Nodes: {list(G.nodes)}')
-# print(f'Edges: {list(G.edges)}')
-#
-# options = {
-#     # 'node_color': 'black',
-#     # 'node_color': [hex(node.colour.hex) for node in list(G.nodes)],
-#     'node_size': 100,
-#     'with_labels': True
-#     # 'width': 3,
-# }
-# # nx.draw_circular(G, **options)
-# # nx.draw_spectral(G, **options)
-# nx.draw_spring(G, **options)
-#
-# # plt.show()
-#
-# print(f'{list(G.nodes)[1]}: {G.adj[list(G.nodes)[1]]}')
-#
-# # print(G.adjacency())
-
-# cube.F()
-
-for side in cube.sides:
-    print(side.neighbours_text)
