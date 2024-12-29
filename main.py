@@ -320,16 +320,31 @@ class _Side:
 
     def set_column(self, column_index: ColumnOrRowIndex, new_values_from_side: VerticalDirection):
         # TODO test set_column
-        new_value: int = self.colour.value
+        # new_value: int = self.colour.value
+        # match new_values_from_side:
+        #     case VerticalDirection.TOP:
+        #         new_value = self.side_above.colour.value
+        #     case VerticalDirection.BOTTOM:
+        #         new_value = self.side_below.colour.value
+        #     case VerticalDirection.OPPOSITE:
+        #         new_value = self.side_opposite.colour.value
+        #
+        # self.matrix[:, column_index.value] = new_value
+
+        new_value: list[int] = [self.colour.value]
         match new_values_from_side:
             case VerticalDirection.TOP:
-                new_value = self.side_above.colour.value
+                # new_value = self.side_above.colour.value
+                new_value = list(self.side_above.matrix[:, column_index.value])
             case VerticalDirection.BOTTOM:
-                new_value = self.side_below.colour.value
+                # new_value = self.side_below.colour.value
+                new_value = list(self.side_below.matrix[:, column_index.value])
             case VerticalDirection.OPPOSITE:
-                new_value = self.side_opposite.colour.value
+                # new_value = self.side_opposite.colour.value
+                new_value = list(self.side_opposite.matrix[:, column_index.value])
 
-        self.matrix[:, column_index.value] = new_value
+        # self.matrix[:, column_index.value] = new_value
+        self.matrix[:, column_index.value] = new_value  # FIXME
 
     def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: HorizontalDirection):
         # TODO remove old implementation
@@ -340,15 +355,19 @@ class _Side:
         #     self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
 
         # TODO test set_row
-        new_value: int = self.colour.value
+        new_value: list[int] = [self.colour.value]
         match new_values_from_side:
             case HorizontalDirection.LEFT:
-                new_value = self.side_left.colour.value
+                # new_value = self.side_left.colour.value
+                new_value = list(self.side_left.matrix[row_index.value, :])
             case HorizontalDirection.RIGHT:
-                new_value = self.side_right.colour.value
+                # new_value = self.side_right.colour.value
+                new_value = list(self.side_right.matrix[row_index.value, :])
             case HorizontalDirection.OPPOSITE:
-                new_value = self.side_opposite.colour.value
-        self.matrix[row_index.value, :] = new_value
+                # new_value = self.side_opposite.colour.value
+                new_value = list(self.side_opposite.matrix[row_index.value, :])
+
+        self.matrix[row_index.value] = new_value
 
     @property
     def adjacent_sides(self):
@@ -380,10 +399,11 @@ cube = Cube()
 # print(cube.green)
 #
 cube.F()
+print(f'F:\n{cube.blue.matrix_string}\n')
 
 # TODO enabling chaining of moves by having each side matrix update with values from relevant adjacent matrix, rather
 #  than setting hard colours
 cube.R()
 
-print(cube.blue.matrix_string)
+print(f'R:\n{cube.blue.matrix_string}')
 # print(cube.red.matrix_string)
