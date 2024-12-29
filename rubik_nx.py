@@ -58,9 +58,7 @@ class Cube:
         return g
 
     def F(self):
-        print(f'\nNeighbours for {self.blue}:')
-        for neighbour in self.blue.neighbours:
-             print(f'\t- {neighbour}')
+        print(self.blue.neighbours_text)
 
 class _Side:
     def __init__(self, colour: Colour, parent_cube: Cube):
@@ -78,6 +76,16 @@ class _Side:
     def neighbours(self) -> list[_Side]:
          return [neighbour for neighbour in self.cube.graph.adj[
             list(self.cube.graph.nodes)[self.cube.sides.index(self)]]]
+
+    @property
+    def neighbours_text(self) -> str:
+        text = f'Neighbours for {self}:'
+        for neighbour in self.neighbours:
+            text += f'\n\t- {neighbour}'
+
+        text += '\n'
+        return text
+
 
 cube = Cube()
 
@@ -102,4 +110,7 @@ cube = Cube()
 #
 # # print(G.adjacency())
 
-cube.F()
+# cube.F()
+
+for side in cube.sides:
+    print(side.neighbours_text)
