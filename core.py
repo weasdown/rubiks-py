@@ -20,7 +20,7 @@ class _Side:
         self.matrix: np.ndarray = np.full((3, 3), self.colour.value, dtype=int)
 
     def __repr__(self):
-        return f'_Side({self.name})'
+        return f'{self.name} Side'
 
 class RotationDirection(Enum):
     """Defines the two possible ways to rotate a side."""
