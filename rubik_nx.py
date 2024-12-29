@@ -72,6 +72,17 @@ class _Side:
         return f'{self.name} Side'
 
     @property
+    def matrix_string(self):
+        """Gets a neater version of self.matrix that shows the name of the Colour in each cell."""
+        matrix = np.full((3, 3), '', dtype=np.dtype('U6'))
+        for row_index, row in enumerate(self.matrix):
+            for column_index, value in enumerate(row):
+                matrix[row_index, column_index] = Colour(value).name
+
+        matrix = str(matrix)[1:-1]  # convert to string, remove the extra leading and trailing square brackets
+        return matrix
+
+    @property
     def neighbours(self) -> list[_Side]:
          return [neighbour for neighbour in self.cube.graph.adj[
             list(self.cube.graph.nodes)[self.cube.sides.index(self)]]]
