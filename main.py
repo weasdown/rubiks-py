@@ -1,7 +1,9 @@
 # Simulator for a 3x3 Rubik's Cube
+from __future__ import annotations
 
 import numpy as np
 from enum import Enum
+
 
 class Direction(Enum):
     """Defines the two possible ways to rotate a side."""
@@ -9,21 +11,25 @@ class Direction(Enum):
     CLOCKWISE = 1
     OPPOSITE = 2
 
+
 class VerticalDirection(Enum):
     TOP = 0
     BOTTOM = 1
     OPPOSITE = 2
+
 
 class HorizontalDirection(Enum):
     LEFT = 0
     RIGHT = 1
     OPPOSITE = 2
 
+
 class ColumnOrRowIndex(Enum):
     """Makes checks of column or row indices more rigorous."""
     FIRST = 0
     SECOND = 1
     THIRD = 2
+
 
 class CubeOperations(Enum):
     F = 0
@@ -33,6 +39,7 @@ class CubeOperations(Enum):
     B = 4
     D = 5
 
+
 class Colour(Enum):
     # TODO add functions to return adjacent colours (like with Dart enums)
     GREEN = 0
@@ -41,6 +48,7 @@ class Colour(Enum):
     ORANGE = 5
     BLUE = 6
     YELLOW = 4
+
 
 class Cube:
     def __init__(self):
@@ -53,14 +61,54 @@ class Cube:
 
         The Blue side is therefore the centre of the net that defines which cells are rows or columns on each side.
         """
-        self.green: _Side = _Side(Colour.GREEN, Colour.WHITE, Colour.ORANGE)
-        self.red: _Side = _Side(Colour.RED, Colour.YELLOW, Colour.BLUE)
-        self.white: _Side = _Side(Colour.WHITE, Colour.BLUE, Colour.ORANGE)
-        self.orange: _Side = _Side(Colour.ORANGE, Colour.YELLOW, Colour.GREEN)
-        self.blue: _Side = _Side(Colour.BLUE, Colour.YELLOW, Colour.ORANGE)
-        self.yellow: _Side = _Side(Colour.YELLOW, Colour.GREEN, Colour.ORANGE)
 
-        self.sides: list[_Side] = [self.green, self.red, self.white, self.orange, self.blue, self.yellow]
+        self.blue: _Side = _Side(Colour.BLUE)  # , Colour.YELLOW, Colour.ORANGE)
+        self.yellow: _Side = _Side(Colour.YELLOW)  # , Colour.GREEN, Colour.ORANGE)
+        self.white: _Side = _Side(Colour.WHITE)  # , Colour.BLUE, Colour.ORANGE)
+        self.orange: _Side = _Side(Colour.ORANGE)  # , Colour.YELLOW, Colour.GREEN)
+        self.red: _Side = _Side(Colour.RED)  # , Colour.YELLOW, Colour.BLUE)
+        self.green: _Side = _Side(Colour.GREEN)  #, Colour.WHITE, Colour.ORANGE)
+
+        self.sides: list[_Side] = [self.blue, self.yellow, self.white, self.orange, self.red, self.green]
+
+        self.connect_sides()
+
+    def connect_sides(self):
+        self.blue.side_above = self.yellow
+        self.blue.side_left = self.orange
+        self.blue.side_below = self.white
+        self.blue.side_right = self.red
+        self.blue.side_opposite = self.green
+
+        self.yellow.side_above = self.green
+        self.yellow.side_left = self.orange
+        self.yellow.side_below = self.blue
+        self.yellow.side_right = self.red
+        self.yellow.side_opposite = self.white
+
+        self.white.side_above = self.yellow
+        self.white.side_left = self.green
+        self.white.side_below = self.white
+        self.white.side_right = self.blue
+        self.white.side_opposite = self.red
+
+        self.orange.side_above = self.green
+        self.orange.side_left = self.orange
+        self.orange.side_below = self.blue
+        self.orange.side_right = self.red
+        self.orange.side_opposite = self.white
+
+        self.red.side_above = self.white
+        self.red.side_left = self.green
+        self.red.side_below = self.yellow
+        self.red.side_right = self.blue
+        self.red.side_opposite = self.orange
+
+        self.green.side_above = self.white
+        self.green.side_left = self.orange
+        self.green.side_below = self.yellow
+        self.green.side_right = self.red
+        self.green.side_opposite = self.blue
 
     def F(self, quarter_turns: int = 1):
         """Rotate the Blue side.
@@ -232,16 +280,16 @@ class Cube:
                 self.green.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.OPPOSITE)
 
 class _Side:
-    def __init__(self, colour: Colour, colour_above_column_1: Colour, colour_left_from_column_1: Colour):
+    def __init__(self, colour: Colour):
         self.colour: Colour = colour
 
-        self.colour_above: Colour = colour_above_column_1
-        self.colour_below: Colour = Colour(6 - self.colour_above.value)
-        self.colour_left: Colour = colour_left_from_column_1
-        self.colour_right: Colour = Colour(6 - self.colour_left.value)
-        self.colour_opposite: Colour = Colour(6 - self.colour.value)
+        self.side_above: _Side | None = None
+        self.side_left: _Side | None = None
+        self.side_below: _Side | None = None
+        self.side_right: _Side | None = None
+        self.side_opposite: _Side | None = None
 
-        self.matrix: np.ndarray = np.full((3,3), self.colour.value, dtype=int)
+        self.matrix: np.ndarray = np.full((3, 3), self.colour.value, dtype=int)
 
     def __str__(self):
         return self.matrix_string
@@ -249,7 +297,7 @@ class _Side:
     @property
     def matrix_string(self):
         """Gets a neater version of self.matrix that shows the name of the Colour in each cell."""
-        matrix = np.full((3,3), '', dtype=np.dtype('U6'))
+        matrix = np.full((3, 3), '', dtype=np.dtype('U6'))
         for row_index, row in enumerate(self.matrix):
             for column_index, value in enumerate(row):
                 matrix[row_index, column_index] = Colour(value).name
@@ -261,12 +309,12 @@ class _Side:
         # Note: np.rot90 rotates anti-clockwise by default.
         rotations: int = -1  # clockwise rotation by default
         match direction:
-           case Direction.ANTICLOCKWISE:
-               rotations = 1
-           case Direction.CLOCKWISE:
-               rotations = -1
-           case Direction.ANTICLOCKWISE:
-               rotations = 2
+            case Direction.ANTICLOCKWISE:
+                rotations = 1
+            case Direction.CLOCKWISE:
+                rotations = -1
+            case Direction.ANTICLOCKWISE:
+                rotations = 2
 
         self.matrix = np.rot90(self.matrix, rotations)
 
@@ -275,13 +323,13 @@ class _Side:
         new_value: int = self.colour.value
         match new_values_from_side:
             case VerticalDirection.TOP:
-                new_value = self.colour_above.value
+                new_value = self.side_above.colour.value
             case VerticalDirection.BOTTOM:
-                new_value = self.colour_below.value
+                new_value = self.side_below.colour.value
             case VerticalDirection.OPPOSITE:
-                new_value = new_value = self.colour_opposite.value
+                new_value = self.side_opposite.colour.value
 
-        self.matrix[:, column_index.value] =  new_value
+        self.matrix[:, column_index.value] = new_value
 
     def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: HorizontalDirection):
         # TODO remove old implementation
@@ -295,19 +343,47 @@ class _Side:
         new_value: int = self.colour.value
         match new_values_from_side:
             case HorizontalDirection.LEFT:
-                new_value = self.colour_left.value
+                new_value = self.side_left.colour.value
             case HorizontalDirection.RIGHT:
-                new_value = self.colour_right.value
+                new_value = self.side_right.colour.value
             case HorizontalDirection.OPPOSITE:
-                new_value = self.colour_opposite.value
+                new_value = self.side_opposite.colour.value
         self.matrix[row_index.value, :] = new_value
+
+    @property
+    def adjacent_sides(self):
+        return [self.side_above, self.side_left, self.side_below, self.side_right]
+
+    @adjacent_sides.setter
+    def adjacent_sides(self, sides_above_left: tuple[_Side]):
+        self.side_above = sides_above_left[0]
+        self.side_left = sides_above_left[1]
+
+    @property
+    def side_above_column_1(self) -> _Side:
+        return self.side_above
+
+    @side_above_column_1.setter
+    def side_above_column_1(self, side_above_column_1: _Side):
+        self.side_above = side_above_column_1
+
+    @property
+    def side_left_from_column_1(self) -> _Side:
+        return self.side_left
+
+    @side_left_from_column_1.setter
+    def side_left_from_column_1(self, side_left_from_column_1: _Side):
+        self.side_left = side_left_from_column_1
+
 
 cube = Cube()
 # print(cube.green)
 #
 cube.F()
 
-# TODO enabling chaining of moves by having each side matrix update with values from relevant adjacent matrix, rather than setting hard colours
+# TODO enabling chaining of moves by having each side matrix update with values from relevant adjacent matrix, rather
+#  than setting hard colours
 cube.R()
 
-print(cube.red.matrix_string)
+print(cube.blue.matrix_string)
+# print(cube.red.matrix_string)
