@@ -34,6 +34,8 @@ class Cube:
 
         self.graph: nx.Graph = self.build_graph()
 
+        self.ring_yellow_red: list[np.ndarray] = [self.yellow.matrix, np.rot90(self.red.matrix, -1), np.rot90(self.white.matrix, -2), np.rot90(self.orange.matrix, 1),]
+
     def build_graph(self) -> nx.Graph:
         g = nx.Graph()
         g.add_nodes_from(self.sides)
@@ -57,11 +59,17 @@ class Cube:
         return g
 
     def F(self):
-        print(self.blue.neighbours_text)
+        # print(self.blue.neighbours_text)
 
-        neighbours: list[_Side] = self.blue.neighbours
+        neighbours: list[_Side] = self.blue.neighbours.copy()
         for index, neighbour in enumerate(neighbours):
-            neighbour.matrix[:, 0] = neighbours[index-1].matrix[0, :] if index != 0 else neighbours[len(neighbours)-1].matrix[0, :]
+            if index != 0:
+                new_matrix = neighbours[index - 1].matrix[0, :]
+                neighbour.matrix[:, 0] = new_matrix
+            else:
+                new_matrix = neighbours[len(neighbours) - 1].matrix[0, :]
+                neighbour.matrix[:, 2] = new_matrix
+
             print(f'New matrix for {neighbour}:\n'
                   f'{neighbour.matrix_string}\n')
 
