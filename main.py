@@ -1,12 +1,13 @@
 # Simulator for a 3x3 Rubik's Cube
 from __future__ import annotations
 
-import numpy as np
 from enum import Enum
+import numpy as np
+from core import Colour
 
 
 class Direction(Enum):
-    """Defines the two possible ways to rotate a side."""
+    """Defines the possible ways to rotate a side."""
     ANTICLOCKWISE = 0
     CLOCKWISE = 1
     OPPOSITE = 2
@@ -38,16 +39,6 @@ class CubeOperations(Enum):
     L = 3
     B = 4
     D = 5
-
-
-class Colour(Enum):
-    # TODO add functions to return adjacent colours (like with Dart enums)
-    GREEN = 0
-    RED = 1
-    WHITE = 2
-    ORANGE = 5
-    BLUE = 6
-    YELLOW = 4
 
 
 class Cube:
@@ -119,10 +110,16 @@ class Cube:
         match quarter_turns:
             case 1:
                 self.blue.rotate(Direction.CLOCKWISE)
-                self.yellow.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
-                self.white.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
-                self.red.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
-                self.orange.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
+
+                self.yellow.matrix[2, :] = self.orange.matrix[:, 2]
+                self.orange.matrix[2, :] = self.white.matrix[:, 2]
+                self.red.matrix[:, 0] = self.yellow.matrix[2, :]
+                self.white.matrix[0, :] = self.red.matrix[:, 0]
+
+                # self.yellow.set_row(ColumnOrRowIndex.THIRD, HorizontalDirection.LEFT)
+                # self.white.set_row(ColumnOrRowIndex.FIRST, HorizontalDirection.RIGHT)
+                # self.red.set_column(ColumnOrRowIndex.FIRST, VerticalDirection.TOP)
+                # self.orange.set_column(ColumnOrRowIndex.THIRD, VerticalDirection.BOTTOM)
 
             case -1:
                 self.blue.rotate(Direction.ANTICLOCKWISE)
@@ -346,28 +343,48 @@ class _Side:
         # self.matrix[:, column_index.value] = new_value
         self.matrix[:, column_index.value] = new_value  # FIXME
 
-    def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: HorizontalDirection):
-        # TODO remove old implementation
-        # if new_values_from_side == HorizontalDirection.LEFT:
-        #     self.matrix[row_index.value, :] = self.colour_left_from_column_1.value
-        # else:
-        #     # Use that Colour values have been defined so opposite sides on the Cube add to 6.
-        #     self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
-
-        # TODO test set_row
-        new_value: list[int] = [self.colour.value]
-        match new_values_from_side:
-            case HorizontalDirection.LEFT:
-                # new_value = self.side_left.colour.value
-                new_value = list(self.side_left.matrix[row_index.value, :])
-            case HorizontalDirection.RIGHT:
-                # new_value = self.side_right.colour.value
-                new_value = list(self.side_right.matrix[row_index.value, :])
-            case HorizontalDirection.OPPOSITE:
-                # new_value = self.side_opposite.colour.value
-                new_value = list(self.side_opposite.matrix[row_index.value, :])
-
-        self.matrix[row_index.value] = new_value
+    # TODO remove old definition of set_row()
+    # def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: HorizontalDirection):
+    #     # TODO remove old implementation
+    #     # if new_values_from_side == HorizontalDirection.LEFT:
+    #     #     self.matrix[row_index.value, :] = self.colour_left_from_column_1.value
+    #     # else:
+    #     #     # Use that Colour values have been defined so opposite sides on the Cube add to 6.
+    #     #     self.matrix[row_index.value, :] = 6 - self.colour_left_from_column_1.value
+    #
+    #     # TODO test set_row
+    #     new_value: list[int] = [self.colour.value]
+    #     match new_values_from_side:
+    #         case HorizontalDirection.LEFT:
+    #             # new_value = self.side_left.colour.value
+    #             new_value = list(self.side_left.matrix[row_index.value, :])
+    #         case HorizontalDirection.RIGHT:
+    #             # new_value = self.side_right.colour.value
+    #             new_value = list(self.side_right.matrix[row_index.value, :])
+    #         case HorizontalDirection.OPPOSITE:
+    #             # new_value = self.side_opposite.colour.value
+    #             new_value = list(self.side_opposite.matrix[row_index.value, :])
+    #
+    #     self.matrix[row_index.value] = new_value
+    #
+    # TODO remove new definition
+    # def set_row(self, row_index: ColumnOrRowIndex, new_values_from_side: _Side):
+    #     # TODO test set_row
+    #     # new_value: list[int] = [self.colour.value]
+    #     # match new_values_from_side:
+    #     #     case HorizontalDirection.LEFT:
+    #     #         # new_value = self.side_left.colour.value
+    #     #         new_value = list(self.side_left.matrix[row_index.value, :])
+    #     #     case HorizontalDirection.RIGHT:
+    #     #         # new_value = self.side_right.colour.value
+    #     #         new_value = list(self.side_right.matrix[row_index.value, :])
+    #     #     case HorizontalDirection.OPPOSITE:
+    #     #         # new_value = self.side_opposite.colour.value
+    #     #         new_value = list(self.side_opposite.matrix[row_index.value, :])
+    #     #
+    #     # self.matrix[row_index.value] = new_value
+    #
+    #     self.matrix[row_index.value] = new_values_from_side.matrix[row_index.value]
 
     @property
     def adjacent_sides(self):
@@ -399,11 +416,11 @@ cube = Cube()
 # print(cube.green)
 #
 cube.F()
-print(f'F:\n{cube.blue.matrix_string}\n')
+print(f'F:\n{cube.red.matrix_string}\n')
 
 # TODO enabling chaining of moves by having each side matrix update with values from relevant adjacent matrix, rather
 #  than setting hard colours
-cube.R()
-
-print(f'R:\n{cube.blue.matrix_string}')
+# cube.R()
+#
+# print(f'R:\n{cube.red.matrix_string}')
 # print(cube.red.matrix_string)
