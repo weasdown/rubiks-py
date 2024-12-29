@@ -4,14 +4,6 @@ from __future__ import annotations
 
 from enum import Enum
 from dataclasses import dataclass
-import numpy as np
-
-# from rubik_nx import Cube
-
-# class Slide:
-#     def __init__(self, name: str, value: int):
-#         self.name: str = name
-#         self.value: int = value
 
 @dataclass
 class _Colour:
@@ -27,10 +19,6 @@ class Colour(Enum):
     ORANGE = _Colour('Orange', 3, int('0xFFA500', 0))
     BLUE = _Colour('Blue', 4, int('0x0000FF', 0))
     YELLOW = _Colour('Yellow', 5, int('0xFFFF00', 0))
-
-    # def __init__(self, name: str, value: int):
-    #     self.name: str = name
-    #     self.value: int = value
 
 class RotationDirection(Enum):
     """Defines the two possible ways to rotate a side."""
