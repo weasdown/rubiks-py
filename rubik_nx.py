@@ -59,6 +59,12 @@ class Cube:
     def F(self):
         print(self.blue.neighbours_text)
 
+        neighbours: list[_Side] = self.blue.neighbours
+        for index, neighbour in enumerate(neighbours):
+            neighbour.matrix[:, 0] = neighbours[index-1].matrix[0, :] if index != 0 else neighbours[len(neighbours)-1].matrix[0, :]
+            print(f'New matrix for {neighbour}:\n'
+                  f'{neighbour.matrix_string}\n')
+
 class _Side:
     def __init__(self, colour: Colour, parent_cube: Cube):
         self.colour: Colour = colour
@@ -77,7 +83,8 @@ class _Side:
         matrix = np.full((3, 3), '', dtype=np.dtype('U6'))
         for row_index, row in enumerate(self.matrix):
             for column_index, value in enumerate(row):
-                matrix[row_index, column_index] = Colour(value).name
+                colour_name = Colour.name_from_value(value)
+                matrix[row_index, column_index] = colour_name
 
         matrix = str(matrix)[1:-1]  # convert to string, remove the extra leading and trailing square brackets
         return matrix

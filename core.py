@@ -19,6 +19,10 @@ class Colour(Enum):
     BLUE = _Colour('Blue', 4, int('0x0000FF', 0))
     YELLOW = _Colour('Yellow', 5, int('0xFFFF00', 0))
 
+    @staticmethod
+    def name_from_value(value: int):
+        return [colour_item.value.name for colour_item in Colour if colour_item.value.value == value][0]
+
 class RotationDirection(Enum):
     """Defines the two possible ways to rotate a side."""
     ANTICLOCKWISE = 0
